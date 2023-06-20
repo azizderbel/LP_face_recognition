@@ -1,8 +1,6 @@
 import numpy as np 
 from pickle import dump
 from sklearn.svm import SVC
-from sklearn.tree import DecisionTreeClassifier
-from sklearn.ensemble import RandomForestClassifier
 from sklearn.utils import shuffle
 
 
@@ -18,7 +16,7 @@ if __name__ == "__main__":
     trainX, trainy = shuffle(trainX,trainy,random_state=42)
 
     # Create a SVC model
-    model = SVC(kernel='linear', probability=True)
+    model = SVC(kernel='linear',C=0.05)
 
     # train the model
     model.fit(trainX,trainy)

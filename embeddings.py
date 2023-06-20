@@ -1,13 +1,13 @@
 import numpy as np 
-from keras.models import load_model
 from keras_facenet import FaceNet
 from sklearn.preprocessing import LabelEncoder
 from pickle import dump
 from sklearn.preprocessing import MinMaxScaler
+from keras.applications.vgg16 import VGG16,preprocess_input
 
 
 def get_embedding(model, face):
-    # scale pixel values
+    """# scale pixel values
     face = face.astype('float32') # 160 * 160 * 3 image
     # standardization
     mean, std = face.mean(), face.std()
@@ -16,11 +16,16 @@ def get_embedding(model, face):
     sample = np.expand_dims(face, axis=0) 
     # make prediction to get embedding
     yhat = model.embeddings(sample)
+    return yhat[0] # 1 * 1 * 512"""
+    face = face.astype('float32')
+    face = np.expand_dims(face, axis=0) 
+    x = preprocess_input(face)
+    features = model.predict(x)
+    return features.ravel()
     
-    return yhat[0] # 1 * 1 * 512
 
 def normalize_embeddings(vector):
-    in_encoder = MinMaxScaler(feature_range=(1,2))
+    in_encoder = MinMaxScaler(feature_range=(0,1))
     return in_encoder.fit_transform(vector)
 
 def encode_target(target):
@@ -37,20 +42,15 @@ if __name__ == "__main__":
     print('Loaded: ', trainX.shape, trainy.shape, testX.shape, testy.shape)
 
     # load the facenet model
-    #facenet_model = load_model('facenet_keras.h5')
-    #print('Loaded Model')
-    facenet_model = FaceNet()
+    facenet_model = VGG16(weights = 'imagenet', include_top=False)
 
     # convert each face in the train set into embedding
     emdTrainX = list()
     for face in trainX:
         emd = get_embedding(facenet_model, face)
         emdTrainX.append(emd)
-    
     emdTrainX = np.asarray(emdTrainX)
-    print(emdTrainX[0])
     emdTrainX = normalize_embeddings(emdTrainX)
-    print(emdTrainX[0])
     print(emdTrainX.shape)
 
     # convert each face in the test set into embedding
