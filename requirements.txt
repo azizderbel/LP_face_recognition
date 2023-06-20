@@ -1,0 +1,10 @@
+tensorflow
+numpy
+matplotlib
+opencv-python
+scikit-learn
+keras
+tensorflow
+streamlit
+keras_facenet
+
