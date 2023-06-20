@@ -17,8 +17,6 @@ if __name__ == "__main__":
     y_pred_train = model.predict(trainX)
     y_pred_test = model.predict(testX)
 
-    print(trainX[0])
-    print(y_pred_test)
 
     # calculate the accuracy score
     train_acc = accuracy_score(trainy, y_pred_train)

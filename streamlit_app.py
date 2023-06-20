@@ -4,6 +4,7 @@ from embeddings import get_embedding,normalize_embeddings
 import numpy as np
 import cv2
 from pickle import load
+from keras.applications.vgg16 import VGG16
 
 
 def clear_flag():
@@ -23,8 +24,9 @@ def preprocess(image):
             face = image[y1:y2, x1:x2]
             face = cv2.resize(face,(160,160))
             # start the embedding process
-            face_net_model = FaceNet()
-            embedded_image = get_embedding(model=face_net_model,face=face)
+            #model = FaceNet()
+            model = VGG16(weights = 'imagenet', include_top=False)
+            embedded_image = get_embedding(model=model,face=face)
             embedded_image = normalize_embeddings(np.reshape(embedded_image,(-1,1)))
             return face,np.reshape(embedded_image,(1,-1))
 
@@ -52,8 +54,12 @@ def main():
             pred_btn = st.button(label='Predict its name !', on_click = clear_flag)
             if pred_btn:
                 y_pred = clf.predict(embedded_image)
-                person_name = encoder.inverse_transform(y_pred)[0]
-                st.write("this person is " + person_name)
+                proba = clf.predict_proba(embedded_image)
+                if np.max(proba) > 0.3:
+                    person_name = encoder.inverse_transform(y_pred)[0]
+                    st.write("this person is " + person_name)
+                else:
+                    st.write("Sorry, I'm not sure who is this person, Please select a new image !")
 
 
 if __name__ == '__main__':

@@ -16,7 +16,7 @@ if __name__ == "__main__":
     trainX, trainy = shuffle(trainX,trainy,random_state=42)
 
     # Create a SVC model
-    model = SVC(kernel='linear',C=0.05)
+    model = SVC(kernel='linear',C=0.05,probability=True)
 
     # train the model
     model.fit(trainX,trainy)
